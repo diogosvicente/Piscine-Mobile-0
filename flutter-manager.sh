@@ -2,14 +2,16 @@
 # Gerenciador de ambiente Flutter/Android no /goinfre/$USER (42)
 
 BASE_DIR="/goinfre/$USER"
-FLUTTER_VERSION="3.35.3"
+FLUTTER_VERSION="3.35.4"
 FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
 ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip"
 
 FLUTTER_DIR="$BASE_DIR/flutter"
 ANDROID_SDK_DIR="$BASE_DIR/android-sdk"
 ANDROID_SDK_TOOLS_DIR="$ANDROID_SDK_DIR/cmdline-tools/latest"
 AVD_HOME="$BASE_DIR/.android/avd"
+BIN_DIR="$BASE_DIR/bin"
 
 AVD_NAME="Pixel_4_API_35"
 AVD_PACKAGE="system-images;android-35;google_apis;x86_64"
@@ -18,37 +20,106 @@ ZSHRC="$HOME/.zshrc"
 
 create_folders() {
     echo "==> Criando estrutura de pastas em $BASE_DIR ..."
-    mkdir -p "$FLUTTER_DIR" "$ANDROID_SDK_DIR/cmdline-tools" "$AVD_HOME"
+    mkdir -p "$FLUTTER_DIR" \
+             "$ANDROID_SDK_DIR/cmdline-tools" \
+             "$AVD_HOME" \
+             "$BASE_DIR/.pub-cache" \
+             "$BASE_DIR/.gradle" \
+             "$BASE_DIR/.flutter" \
+             "$BASE_DIR/.dart-tool" \
+             "$BIN_DIR"
     echo "✅ Estrutura criada."
+}
+
+link_caches() {
+    echo "==> Redirecionando caches do HOME para o goinfre..."
+    rm -rf "$HOME/.gradle" "$HOME/.pub-cache" "$HOME/.android" "$HOME/.flutter" "$HOME/.dart-tool"
+    ln -sfn "$BASE_DIR/.gradle"    "$HOME/.gradle"
+    ln -sfn "$BASE_DIR/.pub-cache" "$HOME/.pub-cache"
+    ln -sfn "$BASE_DIR/.android"   "$HOME/.android"
+    ln -sfn "$BASE_DIR/.flutter"   "$HOME/.flutter"
+    ln -sfn "$BASE_DIR/.dart-tool" "$HOME/.dart-tool"
+    echo "✅ Links simbólicos criados no HOME"
 }
 
 setup_env() {
     echo "==> Configurando variáveis de ambiente..."
-    export PATH="$FLUTTER_DIR/bin:$PATH"
+    export FLUTTER_ROOT="$FLUTTER_DIR"
+    export PATH="$FLUTTER_ROOT/bin:$PATH"
     export ANDROID_SDK_ROOT="$ANDROID_SDK_DIR"
     export PATH="$ANDROID_SDK_TOOLS_DIR/bin:$PATH"
     export PATH="$ANDROID_SDK_DIR/platform-tools:$PATH"
     export PATH="$ANDROID_SDK_DIR/emulator:$PATH"
     export ANDROID_AVD_HOME="$AVD_HOME"
+    export PUB_CACHE="$BASE_DIR/.pub-cache"
+    export GRADLE_USER_HOME="$BASE_DIR/.gradle"
+    export PATH="$BIN_DIR:$PATH"
 
-    if ! grep -q "flutter/bin" "$ZSHRC"; then
+    link_caches
+
+    if ! grep -q "Flutter & Android SDK (42 goinfre setup)" "$ZSHRC"; then
         echo "==> Adicionando variáveis ao ~/.zshrc..."
         cat <<EOL >> "$ZSHRC"
 
 # >>> Flutter & Android SDK (42 goinfre setup) >>>
-export PATH="/goinfre/\$USER/flutter/bin:\$PATH"
+export FLUTTER_ROOT="/goinfre/\$USER/flutter"
+export PATH="\$FLUTTER_ROOT/bin:\$PATH"
+
 export ANDROID_SDK_ROOT="/goinfre/\$USER/android-sdk"
-export PATH="/goinfre/\$USER/android-sdk/cmdline-tools/latest/bin:\$PATH"
-export PATH="/goinfre/\$USER/android-sdk/platform-tools:\$PATH"
-export PATH="/goinfre/\$USER/android-sdk/emulator:\$PATH"
+export PATH="\$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:\$PATH"
+export PATH="\$ANDROID_SDK_ROOT/platform-tools:\$PATH"
+export PATH="\$ANDROID_SDK_ROOT/emulator:\$PATH"
+
 export ANDROID_AVD_HOME="/goinfre/\$USER/.android/avd"
+export PUB_CACHE="/goinfre/\$USER/.pub-cache"
+export GRADLE_USER_HOME="/goinfre/\$USER/.gradle"
+
+export PATH="/goinfre/\$USER/bin:\$PATH"
 # <<< Flutter & Android SDK <<<
 EOL
     fi
 }
 
+clean_all() {
+    echo "⚠️ Isso vai remover TODO o ambiente em $BASE_DIR e os links no HOME."
+    read -p "Tem certeza? (y/N): " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        rm -rf "$BASE_DIR/flutter" \
+               "$BASE_DIR/android-sdk" \
+               "$BASE_DIR/.android" \
+               "$BASE_DIR/.pub-cache" \
+               "$BASE_DIR/.gradle" \
+               "$BASE_DIR/.flutter" \
+               "$BASE_DIR/.dart-tool" \
+               "$BIN_DIR"
+
+        rm -rf "$HOME/.gradle" "$HOME/.pub-cache" "$HOME/.android" "$HOME/.flutter" "$HOME/.dart-tool"
+
+        echo "✅ Ambiente removido de $BASE_DIR e do HOME (~)"
+    else
+        echo "ℹ️ Operação cancelada."
+    fi
+}
+
+install_ninja() {
+    echo "==> Instalando Ninja build em $BIN_DIR ..."
+    mkdir -p "$BIN_DIR"
+    cd "$BASE_DIR" || exit 1
+    wget -q --show-progress "$NINJA_URL" -O ninja.zip
+    unzip -q ninja.zip
+    rm ninja.zip
+    mv ninja "$BIN_DIR/"
+    chmod +x "$BIN_DIR/ninja"
+    echo "✅ Ninja instalado em $BIN_DIR/ninja"
+}
+
 install_sdks() {
+    echo "⚠️ Limpando ambiente antes da instalação..."
+    clean_all <<< "y"
+
+    create_folders
     setup_env
+    install_ninja
 
     # Flutter
     if [ ! -d "$FLUTTER_DIR/bin" ]; then
@@ -112,17 +183,6 @@ start_emulator() {
     fi
 }
 
-clean_all() {
-    echo "⚠️ Isso vai remover TODO o ambiente em $BASE_DIR (Flutter, Android SDK, AVDs, projetos)."
-    read -p "Tem certeza? (y/N): " confirm
-    if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-        rm -rf "$BASE_DIR/flutter" "$BASE_DIR/android-sdk" "$BASE_DIR/.android"
-        echo "✅ Ambiente removido de $BASE_DIR"
-    else
-        echo "ℹ️ Operação cancelada."
-    fi
-}
-
 # =====================================================================
 # MENU
 # =====================================================================
@@ -130,7 +190,7 @@ echo "===================================="
 echo " Flutter Manager - 42 (goinfre/$USER)"
 echo "===================================="
 echo "1) Criar estrutura de pastas"
-echo "2) Instalar SDKs (Flutter + Android)"
+echo "2) Instalar SDKs (Flutter + Android + Ninja)"
 echo "3) Iniciar emulador"
 echo "4) Excluir tudo do ambiente"
 echo "0) Sair"
@@ -145,4 +205,3 @@ case $opt in
     0) echo "Saindo..." ;;
     *) echo "❌ Opção inválida" ;;
 esac
-
