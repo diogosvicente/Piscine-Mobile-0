@@ -18,6 +18,10 @@ AVD_PACKAGE="system-images;android-35;google_apis;x86_64"
 
 ZSHRC="$HOME/.zshrc"
 
+# =====================================================================
+# FUNÇÕES
+# =====================================================================
+
 create_folders() {
     echo "==> Criando estrutura de pastas em $BASE_DIR ..."
     mkdir -p "$FLUTTER_DIR" \
@@ -114,9 +118,6 @@ install_ninja() {
 }
 
 install_sdks() {
-    echo "⚠️ Limpando ambiente antes da instalação..."
-    clean_all <<< "y"
-
     create_folders
     setup_env
     install_ninja
