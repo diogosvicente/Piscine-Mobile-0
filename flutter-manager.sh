@@ -2,9 +2,9 @@
 # Gerenciador de ambiente Flutter/Android no /goinfre/$USER (42)
 
 BASE_DIR="/goinfre/$USER"
-FLUTTER_VERSION="3.35.4"
+FLUTTER_VERSION="3.35.6"
 FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
-ANDROID_SDK_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+ANDROID_SDK_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.35.7-stable.zip"
 NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip"
 
 FLUTTER_DIR="$BASE_DIR/flutter"
