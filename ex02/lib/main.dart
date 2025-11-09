@@ -4,14 +4,14 @@ void main() {
   runApp(const MyApp());
 }
 
-Widget calcButton(String text, {Color color = Colors.white}) {
+Widget calcButton(String text, {Color color = Colors.black}) {
   return Expanded(
     child: ElevatedButton(
         onPressed: () {
-          print("Button pressed: $text");
+          print("button pressed :$text");
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF607D8B), // cor dos botões
+          backgroundColor: const Color(0xFF607D8B),
           padding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(0),
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text(appBarTitle), centerTitle: true),
         body: Container(
-          color: const Color(0xFF455A64), // fundo escuro (cinza azulado)
+          color: const Color(0xFF455A64),
           padding: const EdgeInsets.all(1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,8 +89,8 @@ class MyApp extends StatelessWidget {
                       calcButton("7"),
                       calcButton("8"),
                       calcButton("9"),
-                      calcButton("C", color: Colors.red),
-                      calcButton("AC", color: Colors.red),
+                      calcButton("C", color:  Colors.red.shade900),
+                      calcButton("AC", color: Colors.red.shade900),
                     ],
                   ),
                   Row(
@@ -98,8 +98,8 @@ class MyApp extends StatelessWidget {
                       calcButton("4"),
                       calcButton("5"),
                       calcButton("6"),
-                      calcButton("+", color: Colors.lightBlue),
-                      calcButton("-", color: Colors.lightBlue),
+                      calcButton("+", color: Colors.white),
+                      calcButton("-", color: Colors.white),
                     ],
                   ),
                   Row(
@@ -107,8 +107,8 @@ class MyApp extends StatelessWidget {
                       calcButton("1"),
                       calcButton("2"),
                       calcButton("3"),
-                      calcButton("×", color: Colors.lightBlue),
-                      calcButton("÷", color: Colors.lightBlue),
+                      calcButton("×", color: Colors.white),
+                      calcButton("÷", color: Colors.white),
                     ],
                   ),
                   Row(
@@ -116,7 +116,7 @@ class MyApp extends StatelessWidget {
                       calcButton("0"),
                       calcButton("."),
                       calcButton("00"),
-                      calcButton("=", color: Colors.green),
+                      calcButton("=", color: Colors.white),
                       const Expanded(child: SizedBox()), // espaço invisível
                     ],
                   ),
