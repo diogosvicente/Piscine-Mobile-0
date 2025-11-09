@@ -14,7 +14,7 @@ Widget calcButton(String text, {Color color = Colors.black}) {
       margin: EdgeInsets.zero, // sem espaço externo
       padding: EdgeInsets.zero, // sem espaço interno
       child: ElevatedButton(
-        onPressed: () => print("button pressed: $text"),
+        onPressed: () => (text != '') ? print("button pressed: $text") : '',
         style: ElevatedButton.styleFrom(
           backgroundColor: calcKeyboard,
           padding: EdgeInsets.zero,
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
             final isLandscape =
                 MediaQuery.of(context).orientation == Orientation.landscape;
 
-            final visorFlex = isLandscape ? 2 : 2;
+            final visorFlex = 2;
             final spaceFlex = isLandscape ? 1 : 4;
             final keyboardFlex = isLandscape ? 3 : 6;
 
@@ -170,7 +170,7 @@ class MyApp extends StatelessWidget {
                               calcButton("."),
                               calcButton("00"),
                               calcButton("=", color: Colors.white),
-                              const Expanded(child: SizedBox()),
+                              calcButton(""),
                             ],
                           ),
                         ),
