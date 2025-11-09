@@ -4,6 +4,33 @@ void main() {
   runApp(const MyApp());
 }
 
+Widget calcButton(String text, {Color color = Colors.white}) {
+  return Expanded(
+    child: ElevatedButton(
+        onPressed: () {
+          print("Button pressed: $text");
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF607D8B), // cor dos botões
+          padding: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          elevation: 2,
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 20,
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+  );
+}
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -14,31 +41,91 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text(appBarTitle),
-          centerTitle: true,          
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(16),
+        appBar: AppBar(title: const Text(appBarTitle), centerTitle: true),
+        body: Container(
+          color: const Color(0xFF455A64), // fundo escuro (cinza azulado)
+          padding: const EdgeInsets.all(1),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextField(
-                controller: TextEditingController(text: defaultValue),
-                readOnly: true,
-                textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 32),
+              // ---------- Parte de cima (visores) ----------
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  TextField(
+                    controller: TextEditingController(text: defaultValue),
+                    readOnly: true,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(fontSize: 32, color: Colors.white),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: '',
+                    ),
+                  ),
+                  const Divider(color: Colors.white54),
+                  TextField(
+                    controller: TextEditingController(text: defaultValue),
+                    readOnly: true,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: '',
+                    ),
+                  ),
+                  const Divider(color: Colors.white54),
+                ],
               ),
-              SizedBox(height: 10),
-              TextField(
-                controller: TextEditingController(text: defaultValue),
-                readOnly: true,
-                textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+
+              // ---------- Parte de baixo (teclado) ----------
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      calcButton("7"),
+                      calcButton("8"),
+                      calcButton("9"),
+                      calcButton("C", color: Colors.red),
+                      calcButton("AC", color: Colors.red),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      calcButton("4"),
+                      calcButton("5"),
+                      calcButton("6"),
+                      calcButton("+", color: Colors.lightBlue),
+                      calcButton("-", color: Colors.lightBlue),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      calcButton("1"),
+                      calcButton("2"),
+                      calcButton("3"),
+                      calcButton("×", color: Colors.lightBlue),
+                      calcButton("÷", color: Colors.lightBlue),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      calcButton("0"),
+                      calcButton("."),
+                      calcButton("00"),
+                      calcButton("=", color: Colors.green),
+                      const Expanded(child: SizedBox()), // espaço invisível
+                    ],
+                  ),
+                ],
               ),
             ],
-          )
-        )
-      )
+          ),
+        ),
+      ),
     );
   }
 }
