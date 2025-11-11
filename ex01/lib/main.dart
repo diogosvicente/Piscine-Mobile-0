@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
               ),
               ElevatedButton(
                 onPressed: (){
-                  print("Click me");
+                  print("Button pressed");
                   setState(() {
                     texto = (texto == "A simple text") ? "Hello World" : "A simple text";
                   });

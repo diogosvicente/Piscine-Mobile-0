@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: (){print("Click me");}, child: const Text(
+                onPressed: (){print("Button pressed");}, child: const Text(
                     'Click me',
                     style: TextStyle(
                       fontSize: 18,
